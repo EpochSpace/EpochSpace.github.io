@@ -1,0 +1,561 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pavel Kotsko</title>
+<meta name="description" content="Pavel Kotsko, ML engineer in computer vision. Python and C++.">
+<meta property="og:title" content="Pavel Kotsko">
+<meta property="og:description" content="ML engineer in computer vision. Python and C++.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231F3A5F'/%3E%3Ctext x='32' y='42' font-family='Helvetica,Arial,sans-serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3EPK%3C/text%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg-1: #e9eef7;
+    --bg-2: #f6f1ec;
+    --panel: rgba(255, 255, 255, 0.72);
+    --panel-border: rgba(0, 0, 0, 0.08);
+    --text: #1d1d1f;
+    --muted: #5f6368;
+    --accent: #1f5fbf;
+    --accent-soft: rgba(31, 95, 191, 0.1);
+    --switch-bg: rgba(255, 255, 255, 0.55);
+    --switch-thumb: #ffffff;
+    --label-bg: rgba(40, 40, 42, 0.86);
+    --label-text: #f5f5f7;
+    --shadow: 0 10px 40px rgba(20, 30, 60, 0.12);
+    --icon: 52px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-1: #0f1626;
+      --bg-2: #1b1626;
+      --panel: rgba(30, 32, 40, 0.72);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --text: #f2f2f4;
+      --muted: #a1a5ad;
+      --accent: #6aa5ff;
+      --accent-soft: rgba(106, 165, 255, 0.14);
+      --switch-bg: rgba(40, 42, 52, 0.6);
+      --switch-thumb: rgba(255, 255, 255, 0.16);
+      --label-bg: rgba(235, 235, 240, 0.92);
+      --label-text: #1d1d1f;
+      --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--text);
+    background: var(--bg-1);
+    background-image:
+      radial-gradient(1200px 700px at 10% -10%, rgba(120, 160, 255, 0.35), transparent 60%),
+      radial-gradient(900px 600px at 110% 10%, rgba(255, 170, 120, 0.25), transparent 60%),
+      linear-gradient(180deg, var(--bg-1), var(--bg-2));
+    background-attachment: fixed;
+    font: 16px/1.6 -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Inter, Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  main {
+    position: relative;
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 80px 16px 48px;
+  }
+
+  /* ------------------------------------------------------------ language switch */
+  .lang {
+    position: absolute;
+    top: 22px;
+    right: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    padding: 3px;
+    border-radius: 999px;
+    background: var(--switch-bg);
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 2px 12px rgba(20, 30, 60, 0.08);
+    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    backdrop-filter: blur(20px) saturate(160%);
+  }
+  .lang button {
+    position: relative;
+    z-index: 1;
+    min-width: 46px;
+    padding: 5px 12px;
+    border: 0;
+    background: none;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+    font-family: inherit;
+    letter-spacing: 0.04em;
+    color: var(--muted);
+    cursor: pointer;
+    transition: color .2s ease;
+  }
+  .lang button[aria-pressed="true"] { color: var(--text); }
+  .lang button:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; border-radius: 999px; }
+  .lang .thumb {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    border-radius: 999px;
+    background: var(--switch-thumb);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    transition: transform .28s cubic-bezier(.3, .7, .2, 1);
+  }
+  .lang[data-active="ru"] .thumb { transform: translateX(100%); }
+
+  /* ------------------------------------------------------------ panels */
+  .window {
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+  }
+  .hero-body { padding: 30px 32px; }
+  h1 {
+    margin: 0;
+    font-size: clamp(32px, 6vw, 44px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+  .role {
+    margin: 8px 0 18px;
+    font-size: 18px;
+    color: var(--muted);
+  }
+  .hero p { margin: 0 0 14px; }
+  .meta { color: var(--muted); font-size: 15px; }
+  .contacts { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 15px;
+    font-weight: 500;
+  }
+  .btn:hover { text-decoration: none; filter: brightness(1.08); }
+  .btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+  section { margin-top: 44px; }
+  h2 {
+    margin: 0 0 16px 4px;
+    font-size: 22px;
+    letter-spacing: -0.01em;
+  }
+  .note { margin: -8px 0 16px 4px; color: var(--muted); font-size: 15px; }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  .card { padding: 20px 22px; }
+  .card h3 { margin: 0 0 8px; font-size: 17px; }
+  .card p { margin: 0; font-size: 15px; color: var(--muted); }
+  .card .figure { color: var(--text); font-weight: 600; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+  .tags span {
+    font-size: 12.5px;
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--panel-border);
+    color: var(--muted);
+  }
+  a.card { display: block; color: inherit; transition: transform .2s ease; }
+  a.card:hover { text-decoration: none; transform: translateY(-3px); }
+  a.card h3 { color: var(--accent); }
+
+  footer { margin-top: 56px; text-align: center; color: var(--muted); font-size: 14px; }
+
+  /* ------------------------------------------------------------ skills row */
+  .skills {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    height: var(--icon);
+    /* room above for the magnified icons and their labels */
+    margin: 46px 0 0;
+  }
+  .skill {
+    position: relative;
+    display: block;
+    flex: none;
+    width: var(--icon);
+    height: var(--icon);
+    outline: none;
+  }
+  .skill img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  .skill .label {
+    position: absolute;
+    left: 50%;
+    bottom: calc(100% + 12px);
+    transform: translateX(-50%);
+    padding: 4px 10px;
+    border-radius: 7px;
+    background: var(--label-bg);
+    color: var(--label-text);
+    font-size: 13px;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .12s ease;
+    z-index: 2;
+  }
+  .skill .label::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border: 6px solid transparent;
+    border-top-color: var(--label-bg);
+  }
+  .skill:hover .label,
+  .skill:focus-visible .label { opacity: 1; }
+  .skill:focus-visible img { filter: drop-shadow(0 0 6px var(--accent)); }
+  .skill.bounce img { animation: bounce .9s ease; }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    20% { transform: translateY(-38%); }
+    40% { transform: translateY(0); }
+    58% { transform: translateY(-18%); }
+    76% { transform: translateY(0); }
+  }
+
+  @media (max-width: 700px) {
+    :root { --icon: 40px; }
+    main { padding-top: 72px; }
+    .lang { top: 18px; }
+    .hero-body { padding: 24px 20px; }
+    .grid { grid-template-columns: 1fr; }
+    /* no hover on touch screens: the icons simply wrap */
+    .skills { height: auto; flex-wrap: wrap; margin-top: 28px; }
+    .skill .label { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .skill.bounce img { animation: none; }
+    a.card, .lang .thumb, .lang button { transition: none; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <div class="lang" id="lang" role="group" aria-label="Language" data-active="en">
+    <span class="thumb" aria-hidden="true"></span>
+    <button type="button" data-lang="en" aria-pressed="true">EN</button>
+    <button type="button" data-lang="ru" aria-pressed="false">RU</button>
+  </div>
+
+  <div class="window hero">
+    <div class="hero-body">
+      <h1 data-i18n="name">Pavel Kotsko</h1>
+      <p class="role" data-i18n="role">ML engineer · computer vision · Python &amp; C++</p>
+      <p data-i18n="intro">I take models from the first experiment to a service that people rely on every day.
+        I hold a degree in spacecraft flight dynamics, and my thesis applied neural networks and
+        computer vision to autonomous spacecraft docking, the same mix of ML and aerospace I work
+        with today.</p>
+      <p class="meta" data-i18n="location">Saint Petersburg, Russia · UTC+3</p>
+      <div class="contacts">
+        <a class="btn" href="https://t.me/rust1core" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.04 15.3 8.7 20c.48 0 .69-.21.94-.46l2.26-2.16 4.68 3.43c.86.47 1.47.22 1.7-.79l3.08-14.43c.28-1.27-.46-1.77-1.3-1.46L1.98 11.1c-1.24.48-1.22 1.17-.21 1.48l4.62 1.44L17.1 7.3c.5-.33.96-.15.58.18z"/></svg>
+          Telegram
+        </a>
+        <a class="btn" href="mailto:tarkov3108@gmail.com">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2zm0 4.2-8 5-8-5V6l8 5 8-5z"/></svg>
+          tarkov3108@gmail.com
+        </a>
+        <a class="btn" href="https://github.com/EpochSpace" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.64 22.41c.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.37-3.88-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.05-.71.08-.7.08-.7 1.16.08 1.77 1.19 1.77 1.19 1.03 1.77 2.7 1.26 3.36.96.1-.75.4-1.26.73-1.55-2.55-.29-5.24-1.28-5.24-5.68 0-1.26.45-2.28 1.19-3.09-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.83 1.19 3.09 0 4.41-2.69 5.39-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 12 .5z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <nav class="skills" id="skills" aria-label="Skills" data-i18n-aria="skillsAria">
+    <a class="skill" data-skill="python" target="_blank" rel="noopener"><img src="assets/icons/python.svg" alt="Python"><span class="label"></span></a>
+    <a class="skill" data-skill="cpp" target="_blank" rel="noopener"><img src="assets/icons/cpp.svg" alt="C++"><span class="label"></span></a>
+    <a class="skill" data-skill="pytorch" target="_blank" rel="noopener"><img src="assets/icons/pytorch.svg" alt="PyTorch"><span class="label"></span></a>
+    <a class="skill" data-skill="tensorflow" target="_blank" rel="noopener"><img src="assets/icons/tensorflow.svg" alt="TensorFlow"><span class="label"></span></a>
+    <a class="skill" data-skill="opencv" target="_blank" rel="noopener"><img src="assets/icons/opencv.svg" alt="OpenCV"><span class="label"></span></a>
+    <a class="skill" data-skill="linux" target="_blank" rel="noopener"><img src="assets/icons/linux.svg" alt="Linux"><span class="label"></span></a>
+    <a class="skill" data-skill="cmake" target="_blank" rel="noopener"><img src="assets/icons/cmake.svg" alt="CMake"><span class="label"></span></a>
+    <a class="skill" data-skill="flask" target="_blank" rel="noopener"><img src="assets/icons/flask.svg" alt="Flask"><span class="label"></span></a>
+    <a class="skill" data-skill="sqlite" target="_blank" rel="noopener"><img src="assets/icons/sqlite.svg" alt="SQLite"><span class="label"></span></a>
+    <a class="skill" data-skill="git" target="_blank" rel="noopener"><img src="assets/icons/git.svg" alt="Git"><span class="label"></span></a>
+  </nav>
+
+  <section>
+    <h2 data-i18n="workTitle">What I work on</h2>
+    <p class="note" data-i18n="workNote">Production projects. The code stays with my employer, so I can show demos but not the source.</p>
+    <div class="grid">
+      <div class="window card">
+        <h3 data-i18n="faceTitle">Face recognition from IP cameras</h3>
+        <p data-i18n="faceText">SCRFD detection, AdaFace embeddings and tracking, with the decision made over a series of
+          three or more frames. It went from first version to production in a week and has been
+          running <span class="figure">since December 2025</span>. Operators change thresholds from
+          a web UI without a restart.</p>
+        <div class="tags"><span>PyTorch</span><span>InsightFace</span><span>Flask</span><span>SQLite</span></div>
+      </div>
+      <div class="window card">
+        <h3 data-i18n="uavTitle">UAV visual localization without GPS</h3>
+        <p data-i18n="uavText">Matches onboard frames against satellite maps. On UAV-VisLoc, without fine-tuning,
+          <span class="figure">79%</span> of localizations land within 25 m, with a median error of
+          <span class="figure">20.9 m</span>. Shipped as a C++ library with a deb package; three
+          conference talks, one best talk award.</p>
+        <div class="tags"><span>SuperPoint</span><span>LightGlue</span><span>ONNX Runtime</span><span>C++</span></div>
+      </div>
+      <div class="window card">
+        <h3 data-i18n="medTitle">Medical imaging</h3>
+        <p data-i18n="medText">Neural network models for medical tasks.</p>
+        <div class="tags"><span>PyTorch</span><span>DICOM</span></div>
+      </div>
+      <div class="window card">
+        <h3 data-i18n="ocrTitle">Table OCR</h3>
+        <p data-i18n="ocrText">Scanned PDF tables become Excel files with the same structure: computer vision finds the
+          cells and a locally deployed Qwen2.5-VL reads them. Chosen after comparing
+          <span class="figure">six</span> OCR approaches on real scans.</p>
+        <div class="tags"><span>Qwen2.5-VL</span><span>OpenCV</span><span>VLM</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2 data-i18n="ossTitle">Open source</h2>
+    <div class="grid">
+      <a class="window card" href="https://github.com/EpochSpace/booster-landing" target="_blank" rel="noopener">
+        <h3>booster-landing</h3>
+        <p data-i18n="boosterText">Propulsive landing of a rocket booster. Convex-optimization powered descent guidance flies
+          closed loop through a 6-DoF rigid-body model, and the descent is replayed in real time as a
+          2D side view. Every equation is written up in a 16-page document.</p>
+        <div class="tags"><span>C++</span><span>Python</span></div>
+      </a>
+      <a class="window card" href="https://github.com/EpochSpace/volt" target="_blank" rel="noopener">
+        <h3>volt</h3>
+        <p data-i18n="voltText">HTTP load tester with an interactive terminal UI where you change concurrency on the fly.
+          Python front end, C++ backend.</p>
+        <div class="tags"><span>Python</span><span>C++</span></div>
+      </a>
+      <a class="window card" href="https://github.com/EpochSpace/Matching-Engine" target="_blank" rel="noopener">
+        <h3>Matching-Engine</h3>
+        <p data-i18n="meText">Limit order book with price-time priority, partial fills and separate threads for the order
+          feed, matching and live rendering.</p>
+        <div class="tags"><span>C++17</span><span>CMake</span></div>
+      </a>
+      <a class="window card" href="https://github.com/EpochSpace/Universal-Chess-visual-Assistant" target="_blank" rel="noopener">
+        <h3 data-i18n="chessTitle">Universal Chess Visual Assistant</h3>
+        <p data-i18n="chessText">Finds a chessboard on the screen, recognizes the pieces with a neural network and draws the
+          best move over the board.</p>
+        <div class="tags"><span>Python</span><span>OpenCV</span><span>TensorFlow</span></div>
+      </a>
+    </div>
+  </section>
+
+  <footer data-i18n="footer">© 2026 Pavel Kotsko</footer>
+</main>
+
+<script>
+(function () {
+  // ---------------------------------------------------------------- translations
+  var T = {
+    en: {
+      title: "Pavel Kotsko",
+      skillsAria: "Skills",
+      skills: {
+        python: ["Python — programming language", "https://en.wikipedia.org/wiki/Python_(programming_language)"],
+        cpp: ["C++ — programming language", "https://en.wikipedia.org/wiki/C%2B%2B"],
+        pytorch: ["PyTorch — deep learning framework", "https://en.wikipedia.org/wiki/PyTorch"],
+        tensorflow: ["TensorFlow — machine learning framework", "https://en.wikipedia.org/wiki/TensorFlow"],
+        opencv: ["OpenCV — Open Source Computer Vision Library", "https://en.wikipedia.org/wiki/OpenCV"],
+        linux: ["Linux — operating system", "https://en.wikipedia.org/wiki/Linux"],
+        cmake: ["CMake (Cross-platform Make) — build system", "https://en.wikipedia.org/wiki/CMake"],
+        flask: ["Flask — Python web framework", "https://en.wikipedia.org/wiki/Flask_(web_framework)"],
+        sqlite: ["SQLite — embedded SQL database", "https://en.wikipedia.org/wiki/SQLite"],
+        git: ["Git — version control system", "https://en.wikipedia.org/wiki/Git"]
+      }
+    },
+    ru: {
+      title: "Павел Коцько",
+      skillsAria: "Навыки",
+      name: "Павел Коцько",
+      role: "ML-инженер · компьютерное зрение · Python и C++",
+      intro: "Довожу модели машинного обучения от первого приближения до продукта, которым пользуются люди каждый день. " +
+        "Я получил высшее образование в области динамики полета космических аппаратов, а в дипломной " +
+        "работе применил нейронные сети и компьютерное зрение, для проведения сложнейшего орбитального маневра на орбите - автоматической стыковке космических аппаратов. " +
+        "Это сочетание любви к нейросетевым технологиям и \"космическая\" энергия, остались в моей работе до сих пор:)",
+      location: "Санкт-Петербург, Россия · UTC+3",
+      workTitle: "Чем я занимаюсь",
+      workNote: "Рабочие проекты, которыми я занимался в своей профессиональной деятельности.",
+      faceTitle: "Распознавание лиц по IP-камерам",
+      faceText: "Детекция SCRFD, эмбеддинги AdaFace и трекинг; решение принимается по серии из трёх и более " +
+        "кадров. От первой версии до эксплуатации система дошла за неделю и работает " +
+        "<span class=\"figure\">с декабря 2025 года</span>. Пороги оператор меняет в веб-интерфейсе " +
+        "без перезапуска.",
+      uavTitle: "Визуальная геопривязка БЛА без GPS",
+      uavText: "Сопоставляет бортовые снимки со спутниковыми картами. На UAV-VisLoc без дообучения " +
+        "<span class=\"figure\">79 %</span> локализаций укладываются в 25 м, медианная ошибка " +
+        "<span class=\"figure\">20,9 м</span>. Выпущена как C++-библиотека с deb-пакетом; три доклада " +
+        "на конференциях, один отмечен наградой «За лучший доклад».",
+      medTitle: "Машинное обучение и компьютерное зрения в медицине",
+      medText: "Создание и улучшение нейросетевых моделей классификации и сегментации эхокардиографических изображений. Достигнут уровень, превосходящий по метрикам Dice и Уайсдорфа, текущие SOTA решения.",
+      ocrTitle: "Оцифровка таблиц (OCR)",
+      ocrText: "Отсканированные таблицы из PDF превращаются в Excel с той же структурой: ячейки находит " +
+        "компьютерное зрение, текст читает локально развёрнутая Qwen2.5-VL. Эту связку я выбрал после " +
+        "сравнения <span class=\"figure\">шести</span> подходов к OCR на реальных сканах.",
+      ossTitle: "Открытые проекты",
+      boosterText: "Посадка ракетной ступени на двигателях. Наведение на основе выпуклой оптимизации " +
+        "работает в замкнутом контуре с моделью твёрдого тела с шестью степенями свободы, а спуск " +
+        "воспроизводится в реальном времени в виде сбоку. Все уравнения расписаны в документации " +
+        "на 17 страницах.",
+      voltText: "Нагрузочное тестирование HTTP с интерактивным терминальным интерфейсом: число потоков " +
+        "меняется на лету. Интерфейс на Python, ядро на C++.",
+      meText: "Биржевой стакан лимитных заявок: приоритет по цене и времени, частичное исполнение, " +
+        "отдельные потоки для приёма заявок, их сопоставления и отрисовки в реальном времени.",
+      chessTitle: "Universal Chess Visual Assistant",
+      chessText: "Находит шахматную доску на экране, распознаёт фигуры нейросетью и рисует лучший ход " +
+        "поверх доски.",
+      footer: "© 2026 Павел Коцько",
+      skills: {
+        python: ["Python — язык программирования", "https://ru.wikipedia.org/wiki/Python"],
+        cpp: ["C++ — язык программирования", "https://ru.wikipedia.org/wiki/C%2B%2B"],
+        pytorch: ["PyTorch — фреймворк глубокого обучения", "https://ru.wikipedia.org/wiki/PyTorch"],
+        tensorflow: ["TensorFlow — фреймворк машинного обучения", "https://ru.wikipedia.org/wiki/TensorFlow"],
+        opencv: ["OpenCV — библиотека компьютерного зрения", "https://ru.wikipedia.org/wiki/OpenCV"],
+        linux: ["Linux — операционная система", "https://ru.wikipedia.org/wiki/Linux"],
+        cmake: ["CMake — система сборки", "https://ru.wikipedia.org/wiki/CMake"],
+        flask: ["Flask — веб-фреймворк на Python", "https://ru.wikipedia.org/wiki/Flask"],
+        sqlite: ["SQLite — встраиваемая база данных SQL", "https://ru.wikipedia.org/wiki/SQLite"],
+        git: ["Git — система контроля версий", "https://ru.wikipedia.org/wiki/Git"]
+      }
+    }
+  };
+
+  // The English text lives in the HTML; remember it so we can switch back.
+  var nodes = Array.prototype.slice.call(document.querySelectorAll("[data-i18n]"));
+  nodes.forEach(function (el) { T.en[el.getAttribute("data-i18n")] = el.innerHTML; });
+
+  var switcher = document.getElementById("lang");
+  var buttons = Array.prototype.slice.call(switcher.querySelectorAll("button"));
+  var skillsNav = document.getElementById("skills");
+  var skillLinks = Array.prototype.slice.call(skillsNav.querySelectorAll(".skill"));
+
+  function apply(lang) {
+    var t = T[lang];
+    document.documentElement.lang = lang;
+    document.title = t.title;
+    nodes.forEach(function (el) {
+      var v = t[el.getAttribute("data-i18n")];
+      if (v !== undefined) el.innerHTML = v;
+    });
+    skillsNav.setAttribute("aria-label", t.skillsAria);
+    skillLinks.forEach(function (a) {
+      var s = t.skills[a.getAttribute("data-skill")];
+      a.href = s[1];
+      a.querySelector(".label").textContent = s[0];
+    });
+    switcher.setAttribute("data-active", lang);
+    buttons.forEach(function (b) { b.setAttribute("aria-pressed", String(b.getAttribute("data-lang") === lang)); });
+  }
+
+  function initialLang() {
+    var q = new URLSearchParams(location.search).get("lang");
+    if (q === "ru" || q === "en") return q;
+    try {
+      var saved = localStorage.getItem("lang");
+      if (saved === "ru" || saved === "en") return saved;
+    } catch (e) {}
+    return "en";
+  }
+
+  buttons.forEach(function (b) {
+    b.addEventListener("click", function () {
+      var lang = b.getAttribute("data-lang");
+      apply(lang);
+      try { localStorage.setItem("lang", lang); } catch (e) {}
+    });
+  });
+  apply(initialLang());
+
+  // ---------------------------------------------------------------- magnification wave
+  // Every icon grows by its distance to the cursor with a smooth cosine falloff
+  // and eases toward that size each frame, as in the macOS Dock.
+  var finePointer = window.matchMedia("(hover: hover) and (pointer: fine) and (min-width: 701px)");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var MAX_SCALE = 1.85;   // size of the icon right under the cursor, in base sizes
+  var RANGE = 2.6;        // reach of the effect, in base sizes on each side
+  var EASE = 0.22;        // share of the remaining distance covered per frame
+
+  var mouseX = null;
+  var sizes = skillLinks.map(function () { return 0; });
+  var running = false;
+
+  function baseSize() {
+    return parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--icon")) || 52;
+  }
+
+  function frame() {
+    var base = baseSize();
+    var active = finePointer.matches && !reduced.matches && mouseX !== null;
+    var settled = true;
+    skillLinks.forEach(function (el, i) {
+      if (!sizes[i]) sizes[i] = base;
+      var target = base;
+      if (active) {
+        var r = el.getBoundingClientRect();
+        var d = Math.abs(mouseX - (r.left + r.width / 2));
+        var reach = base * RANGE;
+        if (d < reach) target = base + base * (MAX_SCALE - 1) * (1 + Math.cos(Math.PI * d / reach)) / 2;
+      }
+      sizes[i] += (target - sizes[i]) * EASE;
+      if (Math.abs(target - sizes[i]) > 0.1) settled = false;
+      else sizes[i] = target;
+      el.style.width = el.style.height = sizes[i].toFixed(2) + "px";
+    });
+    if (settled && mouseX === null) {
+      skillLinks.forEach(function (el) { el.style.width = el.style.height = ""; });
+      running = false;
+      return;
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (!running) { running = true; requestAnimationFrame(frame); }
+  }
+
+  skillsNav.addEventListener("mousemove", function (e) { mouseX = e.clientX; start(); });
+  skillsNav.addEventListener("mouseleave", function () { mouseX = null; start(); });
+
+  // The icon bounces once, like an app launching; the link opens in a new tab.
+  skillLinks.forEach(function (el) {
+    el.addEventListener("click", function () {
+      el.classList.remove("bounce");
+      void el.offsetWidth;
+      el.classList.add("bounce");
+    });
+    el.addEventListener("animationend", function () { el.classList.remove("bounce"); });
+  });
+})();
+</script>
+</body>
+</html>
